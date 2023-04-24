@@ -1,6 +1,24 @@
+using DataAccess;
+using DataAccess.Entities;
+using Microsoft.EntityFrameworkCore;
+var MyAllowSpecificOrigins = "*";
+
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>  
+{  
+    options.AddPolicy(name: MyAllowSpecificOrigins,  
+        policy  =>  
+        {  
+            policy.WithOrigins(MyAllowSpecificOrigins)
+            .AllowAnyHeader()
+            .AllowAnyMethod(); // add the allowed origins  
+        });  
+}); 
+
 // Add services to the container.
+builder.Services.AddScoped<FlashCardService>();
+builder.Services.AddDbContext<FlashcardsDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("flashcardsDB")));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
